@@ -3,12 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class EncomendaList extends React.Component{
-    constructor(props){
-        super(props);
-    }
 
     render(){
         return this.loadItems();
+    }
+
+    removeItem(index){
+        var resposta = window.confirm("Deseja deletar o item?");
+        
+        if(resposta){
+            const encomendas = JSON.parse(localStorage.getItem("encomendas") || "[]"); //Pega o valor da variável encomendas do LocalStorage
+            
+            encomendas.splice(index,1);
+            localStorage.setItem("encomendas", JSON.stringify(encomendas));
+
+            window.location.reload();
+        }
     }
 
     loadItems(){
@@ -27,6 +37,9 @@ class EncomendaList extends React.Component{
                     <td>
                         {encomenda.entrega ? "Sim" : "Não"}
                     </td>
+                    <td className="action-td">
+                        <input onClick={()=>this.removeItem(index)} type="button" className="button-danger" value="Remover"/>
+                    </td>
                 </tr>
             );
         }
@@ -44,10 +57,13 @@ class EncomendaList extends React.Component{
                         <th>
                             Entrega
                         </th>
+                        <th>
+                            Action
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {listEncomendas.length > 0 ? listEncomendas : <tr><td colSpan={3}>Não existem encomendas</td></tr>}
+                    {listEncomendas.length > 0 ? listEncomendas : <tr><td colSpan={4}>Não existem encomendas</td></tr>}
                 </tbody>
             </table>
         )
@@ -89,6 +105,7 @@ class EncomendaForm extends React.Component {
 
         setTimeout(function(){
             document.getElementById('alertEncomenda').classList.add("hide");
+            window.location.reload();
         }, 5000);
 
         event.preventDefault();
